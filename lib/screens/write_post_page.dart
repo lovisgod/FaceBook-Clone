@@ -5,6 +5,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PostsCreateScreen extends StatefulWidget {
   
@@ -12,6 +14,7 @@ class PostsCreateScreen extends StatefulWidget {
 
   @override
   _PostCreateScreenState createState() => _PostCreateScreenState();
+  
     }
   
   class _PostCreateScreenState extends State<PostsCreateScreen> {
@@ -19,6 +22,17 @@ class PostsCreateScreen extends StatefulWidget {
     Color sendColor = Color(0xFF484E55);
      File _image;
      String imageUrl;
+     String userName;
+     final dbRef = Firestore.instance;
+      FirebaseAuth auth = FirebaseAuth.instance;
+      FirebaseUser me;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +59,7 @@ class PostsCreateScreen extends StatefulWidget {
                   ),
                  GestureDetector(
                    onTap: (){
-                    _uploadImage(this._image);
+                    _uploadPost();
                    },
                    child: Padding(
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
@@ -179,12 +193,10 @@ class PostsCreateScreen extends StatefulWidget {
   }
 
  _uploadImage(File file) async {
-   EasyLoading.show(status: 'Please wait ..');
    if (file != null) {
     CloudinaryClient client = new CloudinaryClient('832526582587237', 'STcTA55N9MAlyJzKy3WXiSjHPxA', 'psirius-eem');
     CloudinaryResponse response = await client.uploadImage(file.path.toString());
     if (response.secure_url != null) {
-      EasyLoading.showSuccess('Success');
       setState(() {
         this.imageUrl = response.secure_url;
       });
@@ -192,6 +204,42 @@ class PostsCreateScreen extends StatefulWidget {
        EasyLoading.showError('ERROR');
     }
    }
+  }
+
+  // upload documents 
+  _uploadPost() async {
+    try {
+         EasyLoading.show(status: 'Please wait..');
+         await  _uploadImage(this._image);
+        DocumentReference ref =  await dbRef.collection('posts').add({
+        'message': postController.text.toString(),
+        'name': this.userName,
+        'time': DateTime.now(),
+        'mediaUrl': this.imageUrl,
+        'likes': 0,
+      });
+      if (ref != null) {
+        EasyLoading.showSuccess('Success');
+        Navigator.pop(context, false);
+      }  
+    } catch (e) {
+      EasyLoading.showError(e.message);
+    }
+
+  }
+
+  // get profile
+   _getUser() async {
+    FirebaseUser user = await auth.currentUser();
+    if (user != null) {
+      debugPrint(user.email);
+      setState(() {
+        me = user;
+        userName = user.email.substring(0, 5);
+        // profilePics = user.email;
+      });
+      debugPrint(this.userName);
+    }
   }
 
 }
