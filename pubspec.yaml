@@ -28,6 +28,7 @@ dependencies:
   firebase_auth: ^0.16.0
   flutter_easyloading: ^1.0.1
   cloud_firestore: ^0.13.5
+  shimmer: ^1.1.1
 
 dev_dependencies:
   flutter_test:
