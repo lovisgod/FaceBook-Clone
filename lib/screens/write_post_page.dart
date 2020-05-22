@@ -1,6 +1,7 @@
 import 'package:cloudinary_client/models/CloudinaryResponse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';
@@ -178,16 +179,19 @@ class PostsCreateScreen extends StatefulWidget {
   }
 
  _uploadImage(File file) async {
+   EasyLoading.show(status: 'Please wait ..');
    if (file != null) {
     CloudinaryClient client = new CloudinaryClient('832526582587237', 'STcTA55N9MAlyJzKy3WXiSjHPxA', 'psirius-eem');
     CloudinaryResponse response = await client.uploadImage(file.path.toString());
-    debugPrint(response.secure_url);
     if (response.secure_url != null) {
-      debugPrint(response.secure_url);
+      EasyLoading.showSuccess('Success');
       setState(() {
         this.imageUrl = response.secure_url;
       });
+    } else {
+       EasyLoading.showError('ERROR');
     }
    }
   }
+
 }

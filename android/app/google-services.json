@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "440052595070",
+    "firebase_url": "https://facebook-clone-688a1.firebaseio.com",
+    "project_id": "facebook-clone-688a1",
+    "storage_bucket": "facebook-clone-688a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440052595070:android:5cb471aefbbbcf7cbf1b2f",
+        "android_client_info": {
+          "package_name": "com.example.facebook_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "440052595070-nruv0s0llbkdqv83gug50ggldu6vbsn2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.facebook_clone",
+            "certificate_hash": "f029de9f20dd4e3769b79f6d4b2dba9a21ea52a7"
+          }
+        },
+        {
+          "client_id": "440052595070-a9dq4htnht686o4dkak0bnpk33qapjg8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAsGmtjN59squlU-UHFbQ-C81wt9CPGaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "440052595070-a9dq4htnht686o4dkak0bnpk33qapjg8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,7 @@
 import 'package:facebook_clone/screens/post_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,11 +9,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Facebook clone',
-      home: MyHomePage(),
-      color: Color(0xFFE5E5E5),
+    return FlutterEasyLoading(
+          child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Facebook clone',
+        home: MyHomePage(),
+        color: Color(0xFFE5E5E5),
+      ),
     );
   }
 }
@@ -25,7 +29,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser user;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Padding(
                 padding: EdgeInsets.only(left: 20.0, right: 20.0),
                 child: TextField(
+                  controller: emailController,
                  decoration: InputDecoration(
                   hintText: 'Email Adress',
                   // border: InputBorder.none,
@@ -80,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Padding(
                 padding: EdgeInsets.only(left: 20.0, right: 20.0),
                 child: TextField(
+                 controller: passwordController,
                  decoration: InputDecoration(
                   hintText: 'Password',
                   // border: InputBorder.none,
@@ -87,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 	                borderSide: BorderSide(color: Color(0xFFE7E9ED)),   
 	              ),  
                 ),
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.visiblePassword,
                 ),
             ),
           ),
@@ -123,12 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
              children: <Widget>[
               GestureDetector(
                 onTap: (){
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PostsScreen()
-                  ),
-                );
+                  _handlogin();
                 },
                 child: Padding( 
                   padding:EdgeInsets.only(left: 20.0, right: 20.0) ,
@@ -153,12 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
              Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                      builder: (_) => PostsScreen()
-                      ),
-                   );
+                    _handleSignup();
                   },
                   child: Padding(
                    padding: EdgeInsets.only(left: 20.0, right: 20.0), 
@@ -189,4 +188,57 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+ 
+ // handle signup
+_handleSignup() async {
+   EasyLoading.show(status: 'signing you up');
+   AuthResult  authResult  = await _auth.createUserWithEmailAndPassword(
+      email: emailController.text.toString(),
+      password: passwordController.text.toString(),
+    );
+    if (authResult.user != null) {
+      debugPrint(authResult.user.email);
+      setState(() {
+        user = authResult.user;
+      });
+       EasyLoading.dismiss();
+       Navigator.push(
+          context,
+          MaterialPageRoute(
+          builder: (_) => PostsScreen()
+         ),
+        );
+    } else {
+      EasyLoading.showError('Error signing up');
+    }
+ }
+  // handle login
+_handlogin() async {
+  try {
+     EasyLoading.show(status: 'Please wait');
+   AuthResult  authResult  = await _auth.signInWithEmailAndPassword(
+      email: emailController.text.toString(),
+      password: passwordController.text.toString(),
+    );
+    if (authResult.user != null) {
+      debugPrint(authResult.user.email);
+      setState(() {
+        user = authResult.user;
+      });
+       EasyLoading.dismiss();
+       Navigator.push(
+          context,
+          MaterialPageRoute(
+          builder: (_) => PostsScreen()
+         ),
+        );
+    } else {
+      EasyLoading.showError('Error Login In');
+    }
+  } catch (e) {
+    EasyLoading.showError(e.message);
+    debugPrint(e.message);
+  }
+  
+ }
 }
