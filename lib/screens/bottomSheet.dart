@@ -20,55 +20,58 @@ class _BottomSheetState extends State<CommentScreen> {
    TextEditingController _textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-          borderRadius: BorderRadius.circular(15.0),
-          child: Container(
-          height: 400.0,
-          child: new Column(
-           mainAxisAlignment: MainAxisAlignment.start,
-           crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0, left: 20.0),
-                child: Text('Comments',
-                 style: TextStyle(
-                   color: Colors.black,
-                   fontWeight: FontWeight.bold,
-                   fontSize: 20.0
-                 ),
-                ),
-              ),
-              new Flexible(
-                child: StreamBuilder<QuerySnapshot>(
-                      stream: Firestore.instance.collection('comments').document(widget.ref.documentID.toString()).collection('message').snapshots(),
-                      builder: (context, snapshot) {
-                      return snapshot.hasData ? _buildCommentList(snapshot.data.documents) : Text('no comment',
-                       style: TextStyle(
-                         color: Colors.black
-                       ),
-                      );
-                      
-                    },
-                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new Container(
-                  alignment: Alignment.center,
-                  child: _buildTextComposer(),
-                ),
-              ),
-            ],
-          ),
-          decoration: Theme.of(context).platform == TargetPlatform.iOS
-              ? new BoxDecoration(
-                  border: new Border(
-                    top: new BorderSide(color: Colors.grey[200]),
+    return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Container(
+            height: 400.0,
+            child: new Column(
+             mainAxisAlignment: MainAxisAlignment.start,
+             crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20.0),
+                  child: Text('Comments',
+                   style: TextStyle(
+                     color: Colors.black,
+                     fontWeight: FontWeight.bold,
+                     fontSize: 20.0
+                   ),
                   ),
-                ) 
-              : BoxDecoration(
-                color: Colors.white
-              )),
+                ),
+                new Flexible(
+                  child: StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance.collection('comments').document(widget.ref.documentID.toString()).collection('message').snapshots(),
+                        builder: (context, snapshot) {
+                        return snapshot.hasData ? _buildCommentList(snapshot.data.documents) : Text('no comment',
+                         style: TextStyle(
+                           color: Colors.black
+                         ),
+                        );
+                        
+                      },
+                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new Container(
+                    alignment: Alignment.center,
+                    child: _buildTextComposer(),
+                  ),
+                ),
+              ],
+            ),
+            decoration: Theme.of(context).platform == TargetPlatform.iOS
+                ? new BoxDecoration(
+                    border: new Border(
+                      top: new BorderSide(color: Colors.grey[200]),
+                    ),
+                  ) 
+                : BoxDecoration(
+                  color: Colors.white
+                )),
+      ),
     );
   }
 
@@ -193,7 +196,9 @@ class _BottomSheetState extends State<CommentScreen> {
                     borderRadius: BorderRadius.circular(20.0) 
 	              ),  
                   ),
-                  keyboardType: TextInputType.text,
+                   keyboardType: TextInputType.multiline,
+                    minLines: 2,
+                    maxLines: null
                   ),
         ),
         Container(
