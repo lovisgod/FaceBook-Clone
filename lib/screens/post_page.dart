@@ -1,3 +1,4 @@
+import 'package:facebook_clone/screens/bottomSheet.dart';
 import 'package:facebook_clone/screens/write_post_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:facebook_clone/models/post.dart';
 import 'package:facebook_clone/util/timeCalc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PostsScreen extends StatefulWidget {
@@ -211,12 +213,12 @@ class PostsScreen extends StatefulWidget {
           SizedBox(height: 15.0),
           ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
-            child: Image.network(
+            child: post.mediaUrl != null ? Image.network(
               post.mediaUrl.toString(),
               height: 200.0,
               width: 300.0,
               fit: BoxFit.cover,
-              ),
+              ): null,
           ),
           SizedBox(height: 10.0),
           Row(
@@ -255,7 +257,21 @@ class PostsScreen extends StatefulWidget {
                   height: 50.0,
                   child: TextField(
                     onTap: (){
+                      try {
+                        showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                         enableDrag: true,
+                         isScrollControlled: true,
+                         context: context, 
+                         builder:(BuildContext context) {
+                           return CommentScreen(post.reference, this.me);
+                         }
+                        );
 
+                      } catch (e) {
+                        debugPrint(e.message);
+                        EasyLoading.dismiss();
+                      }
                     },
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
@@ -286,7 +302,7 @@ class PostsScreen extends StatefulWidget {
     if (user != null) {
       debugPrint(user.email);
       setState(() {
-        user = user;
+        me = user;
         profilePics = user.email;
       });
       debugPrint(this.profilePics);
